@@ -33,6 +33,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.Image;
+
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CloseableFrame;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -153,18 +164,110 @@ public class RefbotAutoDriveByEncoder_Linear extends LinearOpMode {
         robot.rightBDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at LF:%7d, RF:%7d, LB:%7d, RB:%7d",
-                          robot.leftFDrive.getCurrentPosition(),
-                          robot.rightFDrive.getCurrentPosition(),
-                          robot.leftBDrive.getCurrentPosition(),
-                          robot.rightBDrive.getCurrentPosition());
+        //telemetry.addData("Path0",  "Starting at LF:%7d, RF:%7d, LB:%7d, RB:%7d",
+        //                  robot.leftFDrive.getCurrentPosition(),
+        //                  robot.rightFDrive.getCurrentPosition(),
+        //                  robot.leftBDrive.getCurrentPosition(),
+        //                  robot.rightBDrive.getCurrentPosition());
+        //telemetry.update();
+
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
+        initVuforia();
+
+        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
+            initTfod();
+        } else {
+            telemetry.addData("Sorry!", "This device is not compatible with TFOD");
+        }
+
+        /**
+         * Activate TensorFlow Object Detection before we wait for the start command.
+         * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
+         **/
+        if (tfod != null) {
+            tfod.activate();
+        }
+
+        /** Wait for the game to begin */
+        telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        while(true) {
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, 2, 2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+            encoderDrive(DRIVE_SPEED, -2, -2, 10.0);    // S1: Forward 72 Inches
+            if (CheckForSkyStone(tfod)!=0) {
+                sleep(5000);
+            }
+        }
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
+        /*
         encoderDrive(DRIVE_SPEED,  72,  72, 10.0);    // S1: Forward 72 Inches
         encoderRotate(TURN_SPEED,  360, 10.0);                    // S2: Turn Right 1 rotations
         sleep(500);     // pause for servos to move
@@ -175,13 +278,14 @@ public class RefbotAutoDriveByEncoder_Linear extends LinearOpMode {
         encoderRotate(TURN_SPEED,  360, 10.0);                    // S5: Turn Right 1 rotations
         sleep(500);     // pause for servos to move
         encoderDrive(DRIVE_SPEED,  -48,  -48, 10.0);  // S6: Backwards 48 Inches
+        */
 
         //robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
         //robot.rightClaw.setPosition(0.0);
         //sleep(10000);     // pause for servos to move
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        //telemetry.addData("Path", "Complete");
+        //telemetry.update();
     }
 
     public void encoderRotate(double speed,
@@ -295,8 +399,8 @@ public class RefbotAutoDriveByEncoder_Linear extends LinearOpMode {
                 //                            robot.rightFDrive.getCurrentPosition(),
                 //                            robot.leftBDrive.getCurrentPosition(),
                 //                            robot.rightBDrive.getCurrentPosition());
-                telemetry.addData("Path3",  "Running up: %1.3f, dn: %1.3f, s: %1.3f, p: %5d, t: %5d", spdUp, spdDn, actSpeed, (int)curPos, (int)toGo);
-                telemetry.update();
+                //telemetry.addData("Path3",  "Running up: %1.3f, dn: %1.3f, s: %1.3f, p: %5d, t: %5d", spdUp, spdDn, actSpeed, (int)curPos, (int)toGo);
+                //telemetry.update();
                 //sleep(10);   // optional pause after each move
             }
 
@@ -314,5 +418,181 @@ public class RefbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
             //sleep(500);   // optional pause after each move
         }
+    }
+
+    private static final String TFOD_MODEL_ASSET = "Skystone.tflite";
+    private static final String LABEL_FIRST_ELEMENT = "Stone";
+    private static final String LABEL_SECOND_ELEMENT = "Skystone";
+
+    /*
+     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+     * web site at https://developer.vuforia.com/license-manager.
+     *
+     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+     * random data. As an example, here is a example of a fragment of a valid key:
+     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+     * Once you've obtained a license key, copy the string from the Vuforia web site
+     * and paste it in to your code on the next line, between the double quotes.
+     */
+    private static final String VUFORIA_KEY = "AfWZ0Nj/////AAABma9i7nGZSk81hrDHleShtMuKJES27HbNIQandd3JejLnjvR3256AZU4KbwLKM3zRbhT54zvMHzIwofU7N0TwRifRjMB9sPJ/GZoVpvrcOTNl0F3G6ynufbSkLWWRAGzf3ffMAWeB97a8iF/fPSC5kYY7u56rj2IXVXw7zB2GrTIlFIgkGmy+faJST+4838yCmE4kZFqSc8qnKW1zG0qh9EhMdg8KobZkODSkG2r2uDHXEcvnD8zLKQMIZGm3ueWs1aWvJRZZgx6wDFr1LFnnzZDdJ1en1TjkVWt7Mv+pb8j+9j/9W7Fp4Q5yUrqDl64aeNe7pLplamMYlZXBSOmevv/4r+h6SdQKeimUeP5dCZ6m";
+
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
+    private VuforiaLocalizer vuforia;
+
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the TensorFlow Object
+     * Detection engine.
+     */
+    private TFObjectDetector tfod;
+
+    private int CheckForSkyStone(TFObjectDetector tfod) {
+        boolean beyondBoundry = false;
+        Boolean edgeFound = false;
+        int column=0;
+        int center=0;
+
+                if (tfod != null) {
+                    // getUpdatedRecognitions() will return null if no new information is available since
+                    // the last time that call was made.
+                    for(int j=0; j<1000;j++) {
+                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                        if (updatedRecognitions != null) {
+                            telemetry.addData("# Object Detected", updatedRecognitions.size());
+
+                            // step through the list of recognitions and display boundary info.
+                            int i = 0;
+                            Recognition skystone_rec = null;
+                            for (Recognition recognition : updatedRecognitions) {
+                        /*telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                        //below will give the left, top, right, bottom but it is disabled because of unnesary feedback
+                        telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                          recognition.getLeft(), recognition.getTop());
+                        telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                recognition.getRight(), recognition.getBottom());*/
+
+                                if (recognition.getLabel().contentEquals("Skystone")) {
+                                    skystone_rec = recognition;
+                                }
+                            }
+
+                            // get Frame
+                            CloseableFrame myFrame = vuforia.getFrameQueue().poll();
+
+                            if ((myFrame != null) && (skystone_rec != null)) {
+                                Image myImage = myFrame.getImage(0);
+
+                                ByteBuffer myBuffer = myImage.getPixels();
+                                int bytes_per_pixel = myImage.getStride() / myImage.getBufferWidth();
+                                int row = ((int) (skystone_rec.getTop()) + (int) (skystone_rec.getBottom())) / 4;
+
+                                if (row < 0) {
+                                    row = 0;
+                                }
+
+                                if (row > (myImage.getBufferHeight() - 1)) {
+                                    row = myImage.getBufferHeight() - 1;
+                                }
+
+                                column = (int) skystone_rec.getLeft() / 2;
+                                int boundry = (int) skystone_rec.getRight() / 2;
+                                center = (int) myImage.getBufferWidth() / 2;
+                                int step = 4;
+                                int windowwidth = 16;
+                                float threshold = 0x50 * windowwidth;
+                                int PixelIndex = row * myImage.getBufferWidth() + column;
+
+                                telemetry.addData("Feedback", "Row %d", row);
+
+                                telemetry.addData("Feedback", "Buffer height and width %d %d", myImage.getBufferHeight(), myImage.getBufferWidth());
+
+                                telemetry.addData("Feedback", "Pixel bytes %d", bytes_per_pixel);
+
+                                while (!edgeFound) {
+                                    int sum = 0;
+
+                                    for (int index = 0; index < windowwidth; index++) {
+                                        sum += myBuffer.getChar(PixelIndex + index) & 0x00ff;
+                                    }
+                                    PixelIndex += step;
+                                    column += step;
+                                    if (column > boundry) {
+                                        edgeFound = true;
+                                        beyondBoundry = true;
+
+                                        telemetry.addData("Error", "code is looking for skystone past boundry");
+                                    }
+                                    if (sum <= threshold) {
+                                        edgeFound = true;
+                                    }
+                                    if (edgeFound == true && beyondBoundry == false) {
+                                        telemetry.addData("sum, Pixel Index, column, found edge, offset from center", "%d %d %d %b %d", sum, PixelIndex, column, edgeFound, column - center);
+                                        telemetry.update();
+                                        int offset = (column - center);
+                                        return(offset);
+                                        //if ((offset > 50) && (offset < 250)) {
+                                        //    return (1);
+                                        //}
+                                        //if ((offset > -180) && (offset < -60)) {
+                                        //    return (2);
+                                        //}
+                                        //if ((offset > -280) && (offset < -190)) {
+                                        //    return (3);
+                                        //}
+                                    }
+
+                                }
+
+                            } else if (myFrame == null) {
+                                telemetry.addData("Note", "No Frame");
+                            }
+                            telemetry.update();
+                        }
+                    }
+                }
+
+        //if (tfod != null) {
+        //    tfod.shutdown();
+        //}
+        return(0);
+    }
+
+    /**
+     * Initialize the Vuforia localization engine.
+     */
+    private void initVuforia() {
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
+
+
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters.cameraDirection = CameraDirection.BACK;
+
+        //  Instantiate the Vuforia engine
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+
+        //Get Frame
+        vuforia.setFrameQueueCapacity(1);
+
+        // Loading trackables is not necessary for the TensorFlow Object Detection engine.
+    }
+
+    /**
+     * Initialize the TensorFlow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minimumConfidence = 0.8;
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
     }
 }
